@@ -1,0 +1,203 @@
+zabbix_export:
+  version: '6.2'
+  date: '2022-11-03T21:03:00Z'
+  template_groups:
+    -
+      uuid: 0e60ac85bc3941e2a1d66a048ff164da
+      name: UPS
+  templates:
+    -
+      uuid: 4028b70ef7cf4a828a81d0f16fd5b906
+      template: 'NHS Nobreak Monitor 3.1 scrapper'
+      name: 'NHS Nobreak Monitor 3.1 scrapper'
+      groups:
+        -
+          name: UPS
+      items:
+        -
+          uuid: 4fe19ca6175e4ef8ade19b5833b3bf60
+          name: 'Carga do Nobreak'
+          type: TRAP
+          key: 'nhs.get["Carga_do_nobreak"]'
+          delay: '0'
+          units: '%'
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '1'
+          tags:
+            -
+              tag: Application
+              value: NHS
+          triggers:
+            -
+              uuid: ed341a750bd540edb4946e845aa991c4
+              expression: 'last(/NHS Nobreak Monitor 3.1 scrapper/nhs.get["Carga_do_nobreak"],#5)>=90'
+              recovery_mode: RECOVERY_EXPRESSION
+              recovery_expression: 'last(/NHS Nobreak Monitor 3.1 scrapper/nhs.get["Carga_do_nobreak"],#5)<90'
+              name: 'Carga do Nobreak é maior que 90% nos últimos 5 minutos'
+              priority: DISASTER
+              manual_close: 'YES'
+        -
+          uuid: 5ef28526b15245bd91f6d9f4ae847b54
+          name: 'Estado Bateria'
+          type: TRAP
+          key: 'nhs.get["Estado_Bateria"]'
+          delay: '0'
+          history: 365d
+          trends: '0'
+          value_type: TEXT
+          tags:
+            -
+              tag: Application
+              value: NHS
+        -
+          uuid: 2b2b8a5967e540afa7b489be0693b3e8
+          name: 'Estado Entrada'
+          type: TRAP
+          key: 'nhs.get["Estado_Entrada"]'
+          delay: '0'
+          history: 365d
+          trends: '0'
+          value_type: TEXT
+          tags:
+            -
+              tag: Application
+              value: NHS
+          triggers:
+            -
+              uuid: aa8178d7fdbd45e88dbeeb05419207d1
+              expression: 'last(/NHS Nobreak Monitor 3.1 scrapper/nhs.get["Estado_Entrada"])<>"OK"'
+              recovery_mode: RECOVERY_EXPRESSION
+              recovery_expression: 'last(/NHS Nobreak Monitor 3.1 scrapper/nhs.get["Estado_Entrada"])="OK"'
+              name: 'Estado Entrada não está OK'
+              priority: HIGH
+              manual_close: 'YES'
+        -
+          uuid: d2f08efa6ba64f6ca2ba77edf48b2eef
+          name: 'Estado Saída'
+          type: TRAP
+          key: 'nhs.get["Estado_Saída"]'
+          delay: '0'
+          history: 365d
+          trends: '0'
+          value_type: TEXT
+          tags:
+            -
+              tag: Application
+              value: NHS
+          triggers:
+            -
+              uuid: f6aa3d85ae374c65b3f1c8b39546cff3
+              expression: 'last(/NHS Nobreak Monitor 3.1 scrapper/nhs.get["Estado_Saída"])<>"Normal"'
+              recovery_mode: RECOVERY_EXPRESSION
+              recovery_expression: 'last(/NHS Nobreak Monitor 3.1 scrapper/nhs.get["Estado_Saída"])="Normal"'
+              name: 'Estado Saída não está Normal'
+              priority: HIGH
+              manual_close: 'YES'
+        -
+          uuid: a8e433fea2ea426db9f5c7d31597fb51
+          name: 'Tensão da Bateria'
+          type: TRAP
+          key: 'nhs.get["Tensão_da_bateria"]'
+          delay: '0'
+          units: V
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '1'
+          tags:
+            -
+              tag: Application
+              value: NHS
+        -
+          uuid: d2ddcc437ba74271a521ef89339a52a2
+          name: 'Tensão de Entrada'
+          type: TRAP
+          key: 'nhs.get["Tensão_de_entrada"]'
+          delay: '0'
+          history: 365d
+          units: V
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '1'
+          tags:
+            -
+              tag: Application
+              value: NHS
+        -
+          uuid: fd3c9aadeaac43ab8e01af601af20ad3
+          name: 'Tensão de Entrada máxima'
+          type: TRAP
+          key: 'nhs.get["Tensão_de_entrada_máxima"]'
+          delay: '0'
+          history: 365d
+          units: V
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '1'
+          tags:
+            -
+              tag: Application
+              value: NHS
+        -
+          uuid: f68ffa5d87d7440ebfc9a971808cbba4
+          name: 'Tensão de Entrada mínima'
+          type: TRAP
+          key: 'nhs.get["Tensão_de_entrada_mínima"]'
+          delay: '0'
+          history: 365d
+          units: V
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '1'
+          tags:
+            -
+              tag: Application
+              value: NHS
+        -
+          uuid: 675f4af4ec1642da9e2c876642bfc853
+          name: 'Tensão de Saída'
+          type: TRAP
+          key: 'nhs.get["Tensão_de_saída"]'
+          delay: '0'
+          history: 365d
+          units: V
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '1'
+          tags:
+            -
+              tag: Application
+              value: NHS
+      tags:
+        -
+          tag: Application
+          value: NHS
+  triggers:
+    -
+      uuid: 1546baad7b94487fa6c7fd84675a9799
+      expression: 'last(/NHS Nobreak Monitor 3.1 scrapper/nhs.get["Tensão_de_entrada"],#5) > last(/NHS Nobreak Monitor 3.1 scrapper/nhs.get["Tensão_de_entrada_máxima"],#5)'
+      recovery_mode: RECOVERY_EXPRESSION
+      recovery_expression: 'last(/NHS Nobreak Monitor 3.1 scrapper/nhs.get["Tensão_de_entrada"],#5) <= last(/NHS Nobreak Monitor 3.1 scrapper/nhs.get["Tensão_de_entrada_máxima"],#5)'
+      name: 'Tensão de Entrada Muito Alta'
+      priority: HIGH
+      manual_close: 'YES'
+    -
+      uuid: 8f536f1c06384c099c117a77b77211f6
+      expression: 'last(/NHS Nobreak Monitor 3.1 scrapper/nhs.get["Tensão_de_entrada"],#5)< last(/NHS Nobreak Monitor 3.1 scrapper/nhs.get["Tensão_de_entrada_mínima"],#5)'
+      recovery_mode: RECOVERY_EXPRESSION
+      recovery_expression: 'last(/NHS Nobreak Monitor 3.1 scrapper/nhs.get["Tensão_de_entrada"],#5) >= last(/NHS Nobreak Monitor 3.1 scrapper/nhs.get["Tensão_de_entrada_mínima"],#5)'
+      name: 'Tensão de Entrada Muito Baixa'
+      priority: HIGH
+      manual_close: 'YES'
